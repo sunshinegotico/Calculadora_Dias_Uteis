@@ -41,18 +41,22 @@
     <main class="flex-grow max-w-5xl w-full mx-auto px-4 py-8 space-y-8">
 
         <!-- Tabs Navigation -->
-        <div class="flex border-b border-slate-200 bg-white rounded-t-2xl px-4 pt-2 shadow-sm">
-            <button id="tab-add-btn" onclick="switchTab('add')" class="py-3 px-6 text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 transition-colors">
+        <div class="flex border-b border-slate-200 bg-white rounded-t-2xl px-4 pt-2 shadow-sm overflow-x-auto">
+            <button id="tab-add-btn" onclick="switchTab('add')" class="py-3 px-5 text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 transition-colors whitespace-nowrap">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i> Somar Dias Úteis
             </button>
-            <button id="tab-diff-btn" onclick="switchTab('diff')" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors">
+            <button id="tab-chain-btn" onclick="switchTab('chain')" class="py-3 px-5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors whitespace-nowrap">
+                <i data-lucide="layers" class="w-4 h-4"></i> Encadeamento (6 Etapas)
+            </button>
+            <button id="tab-diff-btn" onclick="switchTab('diff')" class="py-3 px-5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors whitespace-nowrap">
                 <i data-lucide="arrow-right-left" class="w-4 h-4"></i> Diferença Entre Datas
             </button>
-            <button id="tab-holidays-btn" onclick="switchTab('holidays')" class="py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors">
+            <button id="tab-holidays-btn" onclick="switchTab('holidays')" class="py-3 px-5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors whitespace-nowrap">
                 <i data-lucide="calendar-days" class="w-4 h-4"></i> Ver Feriados do Ano
             </button>
         </div>
 
+        <!-- TAB 1: Adicionar Dias Úteis -->
         <!-- TAB 1: Adicionar Dias Úteis -->
         <div id="tab-add-content" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -65,79 +69,145 @@
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1">Data Inicial</label>
                         <div class="relative">
-                            <input type="date" id="add-start-date" class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                            <input type="date" id="add-start-date" onchange="calculateAddDays()" class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                             <i data-lucide="calendar" class="w-5 h-5 text-slate-400 absolute left-3 top-2.5"></i>
                         </div>
                     </div>
 
                     <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="block text-sm font-medium text-slate-700">Dias Úteis a Adicionar</label>
-                            <span class="text-xs text-indigo-600 font-medium cursor-pointer hover:underline" onclick="setQuickDays(9)">Ex: 9 dias</span>
-                        </div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Quantidade de Dias Úteis</label>
                         <div class="relative">
-                            <input type="number" id="add-days-count" min="1" max="1000" value="9" class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                            <i data-lucide="hash" class="w-5 h-5 text-slate-400 absolute left-3 top-2.5"></i>
+                            <input type="number" id="add-days-count" value="10" min="1" max="1000" onchange="calculateAddDays()" onkeyup="calculateAddDays()" class="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm font-semibold text-slate-800">
+                            <i data-lucide="plus-circle" class="w-5 h-5 text-slate-400 absolute left-3 top-2.5"></i>
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                            <button type="button" onclick="setQuickDays(5)" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-medium transition">+5 dias</button>
+                            <button type="button" onclick="setQuickDays(10)" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-medium transition">+10 dias</button>
+                            <button type="button" onclick="setQuickDays(15)" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-medium transition">+15 dias</button>
+                            <button type="button" onclick="setQuickDays(30)" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg font-medium transition">+30 dias</button>
                         </div>
                     </div>
 
-                    <div class="p-3 bg-indigo-50/60 rounded-xl border border-indigo-100 text-xs text-indigo-900 space-y-1">
-                        <div class="font-semibold flex items-center gap-1">
-                            <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-600"></i> Como funciona a contagem?
-                        </div>
-                        <p>A contagem inicia no 1º dia útil <b>após</b> a data inicial selecionada.</p>
-                    </div>
-
-                    <button onclick="calculateAddDays()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-md transition hover:shadow-lg flex items-center justify-center gap-2">
-                        <i data-lucide="calculator" class="w-4 h-4"></i> Calcular Data Final
+                    <button onclick="calculateAddDays()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                        <i data-lucide="calculator" class="w-5 h-5"></i> Calcular Data Final
                     </button>
                 </div>
 
-                <!-- Painel dos Resultados -->
+                <!-- Painel de Resultados -->
                 <div class="md:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6">
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-900 border-b pb-3 flex items-center gap-2">
-                            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600"></i> Resultado
-                        </h2>
-
-                        <div id="result-box" class="mt-4 p-6 bg-slate-50 rounded-2xl border border-slate-200 text-center relative overflow-hidden">
-                            <span class="text-xs font-semibold tracking-wider text-slate-500 uppercase">Data Final Calculada</span>
-                            <div id="result-date" class="text-3xl sm:text-4xl font-extrabold text-indigo-600 mt-1">
-                                --/--/----
-                            </div>
-                            <div id="result-day-name" class="text-sm font-medium text-slate-600 mt-1">
-                                SELECIONE OS PARÂMETROS
-                            </div>
-
-                            <div class="mt-4 grid grid-cols-3 gap-2 text-center text-xs border-t border-slate-200 pt-3">
-                                <div>
-                                    <span class="text-slate-400 block">Total de Dias</span>
-                                    <span id="stat-total-days" class="font-bold text-slate-700 text-sm">-</span>
-                                </div>
-                                <div>
-                                    <span class="text-slate-400 block">Fins de Semana</span>
-                                    <span id="stat-weekends" class="font-bold text-amber-600 text-sm">-</span>
-                                </div>
-                                <div>
-                                    <span class="text-slate-400 block">Feriados</span>
-                                    <span id="stat-holidays" class="font-bold text-rose-600 text-sm">-</span>
-                                </div>
-                            </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between border-b pb-3">
+                            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600"></i> Resultado do Cálculo
+                            </h2>
+                            <span class="text-xs bg-indigo-50 text-indigo-700 font-semibold px-2.5 py-1 rounded-full border border-indigo-100">Data Projetada</span>
                         </div>
 
-                        <!-- Lista de Detalhamento do Período -->
-                        <div class="mt-4">
-                            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
-                                <span>Detalhamento dos Dias</span>
-                                <span id="detail-count-badge" class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-[10px]">0 dias</span>
-                            </h3>
-                            <div id="days-breakdown" class="max-h-52 overflow-y-auto space-y-1.5 pr-1 text-xs">
-                                <!-- Preenchido dinamicamente via JS -->
-                                <p class="text-slate-400 text-center py-6">Aguardando cálculo...</p>
+                        <div class="bg-gradient-to-br from-indigo-500 to-indigo-700 text-white p-6 rounded-2xl shadow-inner flex flex-col items-center justify-center text-center">
+                            <span class="text-xs uppercase tracking-wider text-indigo-200 font-medium">Data Final Calculada</span>
+                            <div id="result-date" class="text-3xl sm:text-4xl font-black mt-1">--/--/----</div>
+                            <div id="result-day-name" class="text-xs text-indigo-100 font-medium mt-1">--</div>
+                        </div>
+
+                        <!-- Resumo Estatístico -->
+                        <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                <span class="text-slate-400 block font-medium">Dias Corridos</span>
+                                <span id="stat-total-days" class="text-base font-bold text-slate-700">0</span>
+                            </div>
+                            <div class="bg-amber-50/50 p-3 rounded-xl border border-amber-100">
+                                <span class="text-amber-600 block font-medium">Fins de Semana</span>
+                                <span id="stat-weekends" class="text-base font-bold text-amber-600">0</span>
+                            </div>
+                            <div class="bg-rose-50/50 p-3 rounded-xl border border-rose-100">
+                                <span class="text-rose-600 block font-medium">Feriados</span>
+                                <span id="stat-holidays" class="text-base font-bold text-rose-600">0</span>
                             </div>
                         </div>
                     </div>
+
+                    <!-- Lista Detalhada dia a dia -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <span>Detalhamento dos Dias</span>
+                            <span id="detail-count-badge" class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md">0 dias</span>
+                        </div>
+                        <div id="days-breakdown" class="max-h-48 overflow-y-auto space-y-1.5 pr-1 text-xs">
+                            <!-- Preenchido dinamicamente -->
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: Cálculo Encadeado em 6 Etapas -->
+        <div id="tab-chain-content" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                <div class="border-b pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="layers" class="w-5 h-5 text-indigo-600"></i> Somatório de Dias Úteis Encadeado (6 Etapas)
+                        </h2>
+                        <p class="text-xs text-slate-500">Cada etapa inicia automaticamente na data final da etapa anterior.</p>
+                    </div>
+                    <button onclick="calculateChain()" class="py-2.5 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-xl shadow-sm transition flex items-center gap-2 text-sm">
+                        <i data-lucide="play" class="w-4 h-4"></i> Recalcular Tudo
+                    </button>
+                </div>
+
+                <!-- Configuração da Data Inicial Geral -->
+                <div class="bg-indigo-50/70 p-4 rounded-xl border border-indigo-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-indigo-600 text-white rounded-lg">
+                            <i data-lucide="flag" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-indigo-900 uppercase tracking-wider">Data Inicial Geral (Etapa 1)</label>
+                            <input type="date" id="chain-start-date" onchange="calculateChain()" class="mt-1 px-3 py-1.5 border border-indigo-200 rounded-lg text-sm font-semibold text-indigo-950 focus:ring-2 focus:ring-indigo-500 bg-white">
+                        </div>
+                    </div>
+                    <div class="text-left sm:text-right bg-white p-3 rounded-xl border border-indigo-100 shadow-sm">
+                        <span class="text-xs text-indigo-700 font-medium block">Soma de Dias Úteis (Todas as Etapas):</span>
+                        <span id="chain-total-business-days" class="text-2xl font-extrabold text-indigo-600">0 dias úteis</span>
+                    </div>
+                </div>
+
+                <!-- Grade das 6 Etapas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="chain-steps-container">
+                    <!-- Gerado Dinamicamente pelo JS -->
+                </div>
+
+                <!-- Card de Resumo Final -->
+                <div class="p-6 bg-slate-900 text-white rounded-2xl shadow-lg flex flex-col sm:flex-row items-center justify-between gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-emerald-500/20 text-emerald-400 rounded-xl border border-emerald-500/30">
+                            <i data-lucide="check-check" class="w-8 h-8"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold uppercase text-emerald-400 tracking-wider">Conclusão do Processo Completo</span>
+                            <h3 id="chain-final-date" class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5">--/--/----</h3>
+                            <p id="chain-final-day-name" class="text-xs text-slate-300">--</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-6 text-center text-xs border-t sm:border-t-0 sm:border-l border-slate-700 pt-4 sm:pt-0 sm:pl-6 w-full sm:w-auto justify-around">
+                        <div>
+                            <span class="text-slate-400 block">Dias Corridos Total</span>
+                            <span id="chain-stat-total-days" class="text-lg font-bold text-slate-100">0</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block">Fins de Semana</span>
+                            <span id="chain-stat-weekends" class="text-lg font-bold text-amber-400">0</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block">Feriados</span>
+                            <span id="chain-stat-holidays" class="text-lg font-bold text-rose-400">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Diferença Entre Datas -->
             </div>
         </div>
 
@@ -227,6 +297,7 @@
             const todayStr = formatDateForInput(today);
             document.getElementById('add-start-date').value = todayStr;
             document.getElementById('diff-start-date').value = todayStr;
+            document.getElementById('chain-start-date').value = todayStr;
             
             // Setar data final padrão para +15 dias no diff
             const futureDate = new Date();
@@ -244,8 +315,10 @@
                 yearSelect.appendChild(opt);
             }
 
-            // Realizar cálculo inicial
+            // Realizar cálculos iniciais
             calculateAddDays();
+            initChainUI();
+            calculateChain();
             renderHolidayList();
         });
 
@@ -253,9 +326,6 @@
         // CÁLCULO DE FERIADOS NACIONAIS (BRASIL)
         // ==========================================
 
-        /**
-         * Algoritmo de Butcher/Gauss para calcular a Páscoa em qualquer ano
-         */
         function getEasterDate(year) {
             const a = year % 19;
             const b = Math.floor(year / 100);
@@ -269,70 +339,187 @@
             const k = c % 4;
             const l = (32 + 2 * e + 2 * i - h - k) % 7;
             const m = Math.floor((a + 11 * h + 22 * l) / 451);
-            const month = Math.floor((h + l - 7 * m + 114) / 31) - 1; // 0-indexed (0=Jan, 2=Mar, 3=Abr)
+            const month = Math.floor((h + l - 7 * m + 114) / 31) - 1; // 0-indexed (0=Jan, 3=Abril)
             const day = ((h + l - 7 * m + 114) % 31) + 1;
             return new Date(year, month, day);
         }
 
-        /**
-         * Retorna a lista de feriados nacionais de um determinado ano
-         */
         function getBrazilianHolidays(year) {
+            const easter = getEasterDate(year);
+
+            const goodFriday = new Date(easter);
+            goodFriday.setDate(easter.getDate() - 2);
+
+            const carnival = new Date(easter);
+            carnival.setDate(easter.getDate() - 47);
+
+            const corpusChristi = new Date(easter);
+            corpusChristi.setDate(easter.getDate() + 60);
+
             const holidays = [
-                // Feriados Fixos
                 { date: `${year}-01-01`, name: "Confraternização Universal", type: "Fixo" },
+                { date: formatDateForInput(carnival), name: "Carnaval", type: "Móvel" },
+                { date: formatDateForInput(goodFriday), name: "Sexta-feira Santa", type: "Móvel" },
                 { date: `${year}-04-21`, name: "Tiradentes", type: "Fixo" },
                 { date: `${year}-05-01`, name: "Dia do Trabalhador", type: "Fixo" },
+                { date: formatDateForInput(corpusChristi), name: "Corpus Christi", type: "Móvel" },
                 { date: `${year}-09-07`, name: "Independência do Brasil", type: "Fixo" },
                 { date: `${year}-10-12`, name: "Nossa Senhora Aparecida", type: "Fixo" },
                 { date: `${year}-11-02`, name: "Finados", type: "Fixo" },
                 { date: `${year}-11-15`, name: "Proclamação da República", type: "Fixo" },
-                { date: `${year}-11-20`, name: "Dia Nacional de Zumbi e da Consciência Negra", type: "Fixo" },
+                { date: `${year}-11-20`, name: "Dia da Consciência Negra", type: "Fixo" },
                 { date: `${year}-12-25`, name: "Natal", type: "Fixo" }
             ];
 
-            // Feriados Móveis baseados na Páscoa
-            const easter = getEasterDate(year);
-
-            // Segunda e Terça de Carnaval (-48 e -47 dias)
-            const carnivalMon = new Date(easter);
-            carnivalMon.setDate(easter.getDate() - 48);
-            holidays.push({ date: formatDateForInput(carnivalMon), name: "Carnaval (Segunda-feira)", type: "Móvel" });
-
-            const carnivalTue = new Date(easter);
-            carnivalTue.setDate(easter.getDate() - 47);
-            holidays.push({ date: formatDateForInput(carnivalTue), name: "Carnaval (Terça-feira)", type: "Móvel" });
-
-            // Sexta-feira Santa (-2 dias)
-            const goodFriday = new Date(easter);
-            goodFriday.setDate(easter.getDate() - 2);
-            holidays.push({ date: formatDateForInput(goodFriday), name: "Sexta-feira Santa", type: "Móvel" });
-
-            // Corpus Christi (+60 dias)
-            const corpusChristi = new Date(easter);
-            corpusChristi.setDate(easter.getDate() + 60);
-            holidays.push({ date: formatDateForInput(corpusChristi), name: "Corpus Christi", type: "Móvel" });
-
-            // Ordena por data
-            return holidays.sort((a, b) => new Date(a.date) - new Date(b.date));
+            return holidays;
         }
 
-        /**
-         * Verifica se uma data específica é feriado
-         */
-        function isHoliday(dateObj) {
-            const year = dateObj.getFullYear();
-            const dateStr = formatDateForInput(dateObj);
-            const holidays = getBrazilianHolidays(year);
-            return holidays.find(h => h.date === dateStr) || null;
-        }
-
-        /**
-         * Verifica se a data é fim de semana (Sábado ou Domingo)
-         */
         function isWeekend(dateObj) {
             const day = dateObj.getDay();
             return day === 0 || day === 6; // 0 = Domingo, 6 = Sábado
+        }
+
+        function isHoliday(dateObj) {
+            const dateStr = formatDateForInput(dateObj);
+            const holidays = getBrazilianHolidays(dateObj.getFullYear());
+            return holidays.find(h => h.date === dateStr) || null;
+        }
+
+        function addBusinessDaysToDate(startDateObj, daysToAdd) {
+            let currentDate = new Date(startDateObj);
+            let addedBusinessDays = 0;
+            let totalDaysPassed = 0;
+            let weekendCount = 0;
+            let holidayCount = 0;
+
+            while (addedBusinessDays < daysToAdd) {
+                currentDate.setDate(currentDate.getDate() + 1);
+                totalDaysPassed++;
+
+                if (isWeekend(currentDate)) {
+                    weekendCount++;
+                } else if (isHoliday(currentDate)) {
+                    holidayCount++;
+                } else {
+                    addedBusinessDays++;
+                }
+            }
+
+            return {
+                finalDate: currentDate,
+                totalDaysPassed: totalDaysPassed,
+                weekendCount: weekendCount,
+                holidayCount: holidayCount
+            };
+        }
+
+        // ==========================================
+        // LÓGICA DO ENCADEAMENTO DE 6 ETAPAS
+        // ==========================================
+
+        const defaultStepDays = [5, 10, 3, 15, 8, 5];
+
+        function initChainUI() {
+            const container = document.getElementById('chain-steps-container');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= 6; i++) {
+                const stepCard = document.createElement('div');
+                stepCard.className = 'bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between space-y-3 relative shadow-sm hover:border-indigo-300 transition-colors';
+                stepCard.innerHTML = `
+                    <div class="flex items-center justify-between border-b pb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px]">${i}</span>
+                            Etapa ${i}
+                        </span>
+                        <span id="chain-badge-${i}" class="text-[10px] font-semibold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">--</span>
+                    </div>
+
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center text-[11px] text-slate-500 font-medium">
+                            <span>Data Inicial da Etapa</span>
+                            ${i > 1 ? `<span class="text-[10px] text-indigo-600 font-normal">(herdada da Etapa ${i-1})</span>` : ''}
+                        </div>
+                        <input type="date" id="chain-step-start-date-${i}" onchange="onManualStepDateChange(${i})" class="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs font-bold text-slate-800 bg-white focus:ring-2 focus:ring-indigo-500">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">+ Dias Úteis a Somar</label>
+                        <input type="number" id="chain-days-input-${i}" min="0" max="365" value="${defaultStepDays[i-1]}" oninput="calculateChain()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-indigo-500 bg-white">
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-200 bg-white p-2.5 rounded-lg border">
+                        <div class="text-[10px] font-bold uppercase text-slate-400">Data Final da Etapa</div>
+                        <div id="chain-step-end-${i}" class="text-base font-extrabold text-indigo-600">--/--/----</div>
+                        <div id="chain-step-dayname-${i}" class="text-[11px] text-slate-500 font-medium truncate">--</div>
+                    </div>
+                `;
+                container.appendChild(stepCard);
+            }
+        }
+
+        function onManualStepDateChange(stepIndex) {
+            if (stepIndex === 1) {
+                const val = document.getElementById('chain-step-start-date-1').value;
+                document.getElementById('chain-start-date').value = val;
+            }
+            calculateChain();
+        }
+
+        function calculateChain() {
+            let startDateStr = document.getElementById('chain-start-date').value;
+            if (!startDateStr) return;
+
+            // Sincroniza a data de inicio da Etapa 1
+            const step1Input = document.getElementById('chain-step-start-date-1');
+            if (step1Input && step1Input.value !== startDateStr && document.activeElement !== step1Input) {
+                step1Input.value = startDateStr;
+            }
+
+            let currentStartDate = parseDateInput(startDateStr);
+            let grandTotalBusinessDays = 0;
+            let grandTotalDaysPassed = 0;
+            let grandTotalWeekends = 0;
+            let grandTotalHolidays = 0;
+
+            for (let i = 1; i <= 6; i++) {
+                const daysInputVal = document.getElementById(`chain-days-input-${i}`)?.value;
+                const daysInput = parseInt(daysInputVal) || 0;
+                grandTotalBusinessDays += daysInput;
+
+                const stepDateInput = document.getElementById(`chain-step-start-date-${i}`);
+                if (stepDateInput && document.activeElement === stepDateInput && stepDateInput.value) {
+                    currentStartDate = parseDateInput(stepDateInput.value);
+                } else if (stepDateInput) {
+                    stepDateInput.value = formatDateForInput(currentStartDate);
+                }
+
+                // Calcular data final da etapa
+                const result = addBusinessDaysToDate(currentStartDate, daysInput);
+
+                grandTotalDaysPassed += result.totalDaysPassed;
+                grandTotalWeekends += result.weekendCount;
+                grandTotalHolidays += result.holidayCount;
+
+                const formattedEndDate = result.finalDate.toLocaleDateString('pt-BR');
+                const dayName = result.finalDate.toLocaleDateString('pt-BR', { weekday: 'short' });
+
+                document.getElementById(`chain-step-end-${i}`).textContent = formattedEndDate;
+                document.getElementById(`chain-step-dayname-${i}`).textContent = `${dayName.toUpperCase()} (+${result.totalDaysPassed} dias corridos)`;
+                document.getElementById(`chain-badge-${i}`).textContent = `+${daysInput} dias úteis`;
+
+                // A data final desta etapa vira o inicio da próxima
+                currentStartDate = new Date(result.finalDate);
+            }
+
+            // Atualizar Resumo Final e Totalizador Geral
+            document.getElementById('chain-total-business-days').textContent = `${grandTotalBusinessDays} dias úteis`;
+            document.getElementById('chain-final-date').textContent = currentStartDate.toLocaleDateString('pt-BR');
+            document.getElementById('chain-final-day-name').textContent = currentStartDate.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }).toUpperCase();
+
+            document.getElementById('chain-stat-total-days').textContent = grandTotalDaysPassed;
+            document.getElementById('chain-stat-weekends').textContent = grandTotalWeekends;
+            document.getElementById('chain-stat-holidays').textContent = grandTotalHolidays;
         }
 
         // ==========================================
@@ -550,20 +737,21 @@
         function switchTab(tab) {
             // Oculta todos os conteúdos
             document.getElementById('tab-add-content').classList.add('hidden');
+            document.getElementById('tab-chain-content').classList.add('hidden');
             document.getElementById('tab-diff-content').classList.add('hidden');
             document.getElementById('tab-holidays-content').classList.add('hidden');
 
             // Reseta estilo dos botões
-            const tabs = ['add', 'diff', 'holidays'];
+            const tabs = ['add', 'chain', 'diff', 'holidays'];
             tabs.forEach(t => {
                 const btn = document.getElementById(`tab-${t}-btn`);
-                btn.className = "py-3 px-6 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors";
+                if(btn) btn.className = "py-3 px-5 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center gap-2 transition-colors whitespace-nowrap";
             });
 
             // Ativa a tab atual
             document.getElementById(`tab-${tab}-content`).classList.remove('hidden');
             const activeBtn = document.getElementById(`tab-${tab}-btn`);
-            activeBtn.className = "py-3 px-6 text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 transition-colors";
+            if(activeBtn) activeBtn.className = "py-3 px-5 text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 flex items-center gap-2 transition-colors whitespace-nowrap";
         }
     </script>
 </body>
