@@ -175,6 +175,72 @@
                     </div>
                     <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <label for="lead-order-value" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Valor do Pedido (R$)</label>
+                        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
+
+    <div class="flex items-center justify-between mb-3">
+
+        <label
+            class="text-xs font-semibold text-amber-900 uppercase tracking-wider">
+
+            Personalizar Prazos
+
+        </label>
+
+        <input
+            type="checkbox"
+            id="custom-lead-times"
+            onchange="toggleLeadTimeEdit(); calculateLeadTime()"
+            class="w-4 h-4 accent-amber-600">
+
+    </div>
+
+    <div
+        id="custom-days-container"
+        class="hidden grid grid-cols-2 gap-3">
+
+        <div>
+            <label class="text-xs">Fornecedor</label>
+            <input type="number" id="supplier-days"
+                   value="20" min="0"
+                   oninput="calculateLeadTime()"
+                   class="w-full px-3 py-2 border rounded-lg">
+        </div>
+
+        <div>
+            <label class="text-xs">Material</label>
+            <input type="number" id="material-days"
+                   value="7" min="0"
+                   oninput="calculateLeadTime()"
+                   class="w-full px-3 py-2 border rounded-lg">
+        </div>
+
+        <div>
+            <label class="text-xs">RC Spot</label>
+            <input type="number" id="spot-days"
+                   value="3" min="0"
+                   oninput="calculateLeadTime()"
+                   class="w-full px-3 py-2 border rounded-lg">
+        </div>
+
+        <div>
+            <label class="text-xs">Contrato</label>
+            <input type="number" id="contract-days"
+                   value="1" min="0"
+                   oninput="calculateLeadTime()"
+                   class="w-full px-3 py-2 border rounded-lg">
+        </div>
+
+        <div>
+            <label class="text-xs">RC Consumo</label>
+            <input type="number" id="consumption-days"
+                   value="3" min="0"
+                   oninput="calculateLeadTime()"
+                   class="w-full px-3 py-2 border rounded-lg">
+        </div>
+
+    </div>
+
+</div>
                         <div class="relative">
                             <span class="absolute left-3 top-2.5 text-sm font-semibold text-slate-500">R$</span>
                             <input type="number" id="lead-order-value" min="0" step="0.01" value="10000" oninput="calculateLeadTime()" class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 bg-white">
@@ -426,19 +492,19 @@
         // ==========================================
 
         function getRCSpotDays(valor) {
-            if (valor <= 10000) return 3;
-            if (valor <= 50000) return 5;
-            if (valor <= 100000) return 7;
-            if (valor <= 500000) return 10;
-            return 15;
+            if (valor <= 20000) return 2;
+            if (valor <= 200000) return 3;
+            if (valor <= 6000000) return 4;
+            if (valor <= 500000) return 5;
+            return 6;
         }
 
         function getRCConsumoDays(valor) {
-            if (valor <= 10000) return 2;
-            if (valor <= 50000) return 4;
-            if (valor <= 100000) return 6;
-            if (valor <= 500000) return 8;
-            return 12;
+             if (valor <= 20000) return 2;
+            if (valor <= 200000) return 3;
+            if (valor <= 6000000) return 4;
+            if (valor <= 500000) return 5;
+            return 6;
         }
 
         function toggleMaterialInputs() {
@@ -457,12 +523,28 @@
             const valor = Number(document.getElementById('lead-order-value').value);
             if (!startDateStr || !Number.isFinite(valor) || valor < 0 || (includeMaterial && !materialStartDateStr)) return;
 
-            const startDate = parseDateInput(startDateStr);
-            const supplierDays = 20;
-            const materialDays = 7;
-            const spotDays = getRCSpotDays(valor);
-            const contractDays = 1;
-            const consumptionDays = getRCConsumoDays(valor);
+           const customMode =
+    document.getElementById('custom-lead-times')?.checked || false;
+
+const supplierDays = customMode
+    ? Number(document.getElementById('supplier-days').value)
+    : 20;
+
+const materialDays = customMode
+    ? Number(document.getElementById('material-days').value)
+    : 7;
+
+const spotDays = customMode
+    ? Number(document.getElementById('spot-days').value)
+    : getRCSpotDays(valor);
+
+const contractDays = customMode
+    ? Number(document.getElementById('contract-days').value)
+    : 1;
+
+const consumptionDays = customMode
+    ? Number(document.getElementById('consumption-days').value)
+    : getRCConsumoDays(valor);
 
             const supplierEnd = addBusinessDaysToDate(startDate, supplierDays).finalDate;
             let materialEnd = null;
@@ -475,15 +557,48 @@
             }
 
             if (includeSpot) {
-                // RC Spot começa após a conclusão do Cadastro de Material, quando exigido.
-                // Se o material não for exigido, começa após a conclusão do Cadastro de Fornecedor.
-                const spotStart = includeMaterial ? materialEnd : supplierEnd;
-                spotEnd = addBusinessDaysToDate(spotStart, spotDays).finalDate;
-                contractStart = new Date(Math.max(supplierEnd.getTime(), spotEnd.getTime()));
-            } else if (includeMaterial) {
-                // Sem RC Spot, o contrato aguarda a conclusão do fornecedor e do material.
-                contractStart = new Date(Math.max(supplierEnd.getTime(), materialEnd.getTime()));
-            }
+
+    let spotStart;
+
+    if (includeMaterial) {
+
+        // RC Spot espera Fornecedor e Material
+
+        spotStart = new Date(
+            Math.max(
+                supplierEnd.getTime(),
+                materialEnd.getTime()
+            )
+        );
+
+    } else {
+
+        // Sem Material ela inicia após o fornecedor
+
+        spotStart = supplierEnd;
+
+    }
+
+    spotEnd = addBusinessDaysToDate(
+        spotStart,
+        spotDays
+    ).finalDate;
+
+    // Contrato inicia após a RC Spot
+
+    contractStart = new Date(spotEnd);
+
+} else {
+
+    contractStart = includeMaterial
+        ? new Date(
+            Math.max(
+                supplierEnd.getTime(),
+                materialEnd.getTime()
+            )
+        )
+        : supplierEnd;
+}
 
             const contractEnd = addBusinessDaysToDate(contractStart, contractDays).finalDate;
             const consumptionEnd = addBusinessDaysToDate(contractEnd, consumptionDays).finalDate;
@@ -494,9 +609,14 @@
             if (includeMaterial) {
                 steps.push({ name: 'Cadastro de Material', days: materialDays, end: materialEnd, note: `Inicia em ${parseDateInput(materialStartDateStr).toLocaleDateString('pt-BR')} (data independente)` });
             }
-            if (includeSpot) {
-                steps.push({ name: 'RC Spot', days: spotDays, end: spotEnd, note: includeMaterial ? `Inicia após a conclusão do Cadastro de Material (${materialEnd.toLocaleDateString('pt-BR')})` : `Cadastro de Material não exigido: inicia após a conclusão do Cadastro de Fornecedor (${supplierEnd.toLocaleDateString('pt-BR')})` });
-            }
+           steps.push({
+    name: 'RC Spot',
+    days: spotDays,
+    end: spotEnd,
+    note: includeMaterial
+        ? `Inicia após a conclusão do Cadastro de Fornecedor (${supplierEnd.toLocaleDateString('pt-BR')}) e do Cadastro de Material (${materialEnd.toLocaleDateString('pt-BR')})`
+        : `Cadastro de Material não exigido: inicia após a conclusão do Cadastro de Fornecedor (${supplierEnd.toLocaleDateString('pt-BR')})`
+});
             steps.push(
                 { name: 'Contrato Operacional', days: contractDays, end: contractEnd, note: includeSpot ? 'Aguarda a conclusão do Cadastro de Fornecedor e da RC Spot' : (includeMaterial ? 'Aguarda a conclusão do Cadastro de Fornecedor e do Cadastro de Material' : 'Inicia após o Cadastro de Fornecedor') },
                 { name: 'RC Consumo', days: consumptionDays, end: consumptionEnd, note: 'Inicia após o Contrato Operacional' }
@@ -536,6 +656,16 @@
                 cursor.setDate(cursor.getDate() + 1);
                 if (!isWeekend(cursor) && !isHoliday(cursor)) totalBusinessDays++;
             }
+            function toggleLeadTimeEdit() {
+
+    const enabled =
+        document.getElementById('custom-lead-times').checked;
+
+    document
+        .getElementById('custom-days-container')
+        .classList.toggle('hidden', !enabled);
+
+}
 
             document.getElementById('lead-final-date').textContent = consumptionEnd.toLocaleDateString('pt-BR');
             document.getElementById('lead-final-day-name').textContent =
