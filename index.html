@@ -173,81 +173,128 @@
                             <p class="text-xs text-violet-800 mt-1">Se o Cadastro de Material não for exigido, a RC Spot começa após o Cadastro de Fornecedor.</p>
                         </div>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                        <label for="lead-order-value" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Valor do Pedido (R$)</label>
-                        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
-                        <div class="relative">
-                            <span class="absolute left-3 top-2.5 text-sm font-semibold text-slate-500">R$</span>
-                            <input type="number" id="lead-order-value" min="0" step="0.01" value="10000" oninput="calculateLeadTime()" class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 bg-white">
-                        </div>
-                        <p class="text-xs text-slate-500 mt-2">O valor define os prazos de RC Spot e RC Consumo.</p>
-                    </div>
-                        
-    <div class="flex items-center justify-between mb-3">
+                    <!-- Coluna Valor do Pedido + Personalizar Prazos -->
+<div class="space-y-4">
+
+    <!-- Valor do Pedido -->
+    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
 
         <label
-            class="text-xs font-semibold text-amber-900 uppercase tracking-wider">
+            for="lead-order-value"
+            class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
 
-            Personalizar Prazos
+            Valor do Pedido (R$)
 
         </label>
 
-        <input
-            type="checkbox"
-            id="custom-lead-times"
-            onchange="toggleLeadTimeEdit(); calculateLeadTime()"
-            class="w-4 h-4 accent-amber-600">
+        <div class="relative">
+
+            <span class="absolute left-3 top-2.5 text-sm font-semibold text-slate-500">
+                R$
+            </span>
+
+            <input
+                type="number"
+                id="lead-order-value"
+                min="0"
+                step="0.01"
+                value="10000"
+                oninput="calculateLeadTime()"
+                class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500 bg-white">
+
+        </div>
+
+        <p class="text-xs text-slate-500 mt-2">
+            O valor define os prazos automáticos da RC Spot e RC Consumo.
+        </p>
 
     </div>
 
-    <div
-        id="custom-days-container"
-        class="hidden grid grid-cols-2 gap-3">
+    <!-- Personalizar Prazos -->
+    <div class="bg-amber-50 p-4 rounded-xl border border-amber-200">
 
-        <div>
-            <label class="text-xs">Fornecedor</label>
-            <input type="number" id="supplier-days"
-                   value="20" min="0"
-                   oninput="calculateLeadTime()"
-                   class="w-full px-3 py-2 border rounded-lg">
+        <div class="flex items-center justify-between mb-3">
+
+            <label
+                class="text-xs font-semibold text-amber-900 uppercase tracking-wider">
+
+                Personalizar Prazos
+
+            </label>
+
+            <input
+                type="checkbox"
+                id="custom-lead-times"
+                onchange="toggleLeadTimeEdit(); calculateLeadTime()"
+                class="w-4 h-4 accent-amber-600">
+
         </div>
 
-        <div>
-            <label class="text-xs">Material</label>
-            <input type="number" id="material-days"
-                   value="7" min="0"
-                   oninput="calculateLeadTime()"
-                   class="w-full px-3 py-2 border rounded-lg">
-        </div>
+        <div
+            id="custom-days-container"
+            class="hidden grid grid-cols-2 gap-3">
 
-        <div>
-            <label class="text-xs">RC Spot</label>
-            <input type="number" id="spot-days"
-                   value="3" min="0"
-                   oninput="calculateLeadTime()"
-                   class="w-full px-3 py-2 border rounded-lg">
-        </div>
+            <div>
+                <label class="text-xs">Fornecedor</label>
+                <input
+                    type="number"
+                    id="supplier-days"
+                    value="20"
+                    min="0"
+                    oninput="calculateLeadTime()"
+                    class="w-full px-3 py-2 border rounded-lg">
+            </div>
 
-        <div>
-            <label class="text-xs">Contrato</label>
-            <input type="number" id="contract-days"
-                   value="1" min="0"
-                   oninput="calculateLeadTime()"
-                   class="w-full px-3 py-2 border rounded-lg">
-        </div>
+            <div>
+                <label class="text-xs">Material</label>
+                <input
+                    type="number"
+                    id="material-days"
+                    value="7"
+                    min="0"
+                    oninput="calculateLeadTime()"
+                    class="w-full px-3 py-2 border rounded-lg">
+            </div>
 
-        <div>
-            <label class="text-xs">RC Consumo</label>
-            <input type="number" id="consumption-days"
-                   value="3" min="0"
-                   oninput="calculateLeadTime()"
-                   class="w-full px-3 py-2 border rounded-lg">
+            <div>
+                <label class="text-xs">RC Spot</label>
+                <input
+                    type="number"
+                    id="spot-days"
+                    value="3"
+                    min="0"
+                    oninput="calculateLeadTime()"
+                    class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
+            <div>
+                <label class="text-xs">Contrato</label>
+                <input
+                    type="number"
+                    id="contract-days"
+                    value="1"
+                    min="0"
+                    oninput="calculateLeadTime()"
+                    class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
+            <div>
+                <label class="text-xs">RC Consumo</label>
+                <input
+                    type="number"
+                    id="consumption-days"
+                    value="3"
+                    min="0"
+                    oninput="calculateLeadTime()"
+                    class="w-full px-3 py-2 border rounded-lg">
+            </div>
+
         </div>
 
     </div>
 
 </div>
-                </div>
+</div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="lead-time-steps-container">
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">Calculando etapas...</div>
                 </div>
@@ -492,22 +539,32 @@
         // ==========================================
 
         function getRCSpotDays(valor) {
-            if (valor <= 20000) return 2;
-            if (valor <= 200000) return 3;
-            if (valor <= 6000000) return 4;
-            if (valor <= 500000) return 5;
-            return 6;
-        }
+    if (valor <= 20000) return 2;
+    if (valor <= 200000) return 3;
+    if (valor <= 500000) return 4;
+    if (valor <= 6000000) return 5;
+    return 6;
+}
 
-        function getRCConsumoDays(valor) {
-             if (valor <= 20000) return 2;
-            if (valor <= 200000) return 3;
-            if (valor <= 6000000) return 4;
-            if (valor <= 500000) return 5;
-            return 6;
-        }
+    function getRCConsumoDays(valor) {
+    if (valor <= 20000) return 2;
+    if (valor <= 200000) return 3;
+    if (valor <= 500000) return 4;
+    if (valor <= 6000000) return 5;
+    return 6;
+}
+  function toggleLeadTimeEdit() {
 
+    const enabled =
+        document.getElementById('custom-lead-times').checked;
+
+    document
+        .getElementById('custom-days-container')
+        .classList.toggle('hidden', !enabled);
+
+}
         function toggleMaterialInputs() {
+          
             const enabled = document.getElementById('include-material').checked;
             const dateInput = document.getElementById('material-start-date');
             dateInput.disabled = !enabled;
@@ -657,16 +714,6 @@ const consumptionDays = customMode
                 cursor.setDate(cursor.getDate() + 1);
                 if (!isWeekend(cursor) && !isHoliday(cursor)) totalBusinessDays++;
             }
-            function toggleLeadTimeEdit() {
-
-    const enabled =
-        document.getElementById('custom-lead-times').checked;
-
-    document
-        .getElementById('custom-days-container')
-        .classList.toggle('hidden', !enabled);
-
-}
 
             document.getElementById('lead-final-date').textContent = consumptionEnd.toLocaleDateString('pt-BR');
             document.getElementById('lead-final-day-name').textContent =
